@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>간편 애착유형 자가진단</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+    background: #f4f7f1;
+    color: #24301f;
+  }
+  .app {
+    width: min(100%, 560px);
+    min-height: 100vh;
+    margin: 0 auto;
+    background: #fff;
+  }
+  header {
+    background: linear-gradient(135deg, #e8f2df, #f5f8ef);
+    padding: 22px 22px 18px;
+    border-bottom: 1px solid #d5e1cc;
+  }
+  .title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 7px;
+  }
+  .subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: #64705e;
+    line-height: 1.5;
+  }
+  .content { padding: 22px; }
+  .name-box { margin-bottom: 20px; }
+  label { font-size: 14px; font-weight: 700; display: block; margin-bottom: 8px; }
+  input[type="text"] {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd6c4;
+    border-radius: 10px;
+    font-size: 16px;
+    outline: none;
+  }
+  input[type="text"]:focus { border-color: #7ca35e; box-shadow: 0 0 0 3px #e8f2df; }
+
+  .intro {
+    background: #f7faf5;
+    border-radius: 14px;
+    padding: 16px;
+    line-height: 1.65;
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+  .btn {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .primary { background: #7da45e; color: white; }
+  .primary:hover { background: #6e944f; }
+  .secondary { background: #edf2e9; color: #4c5e43; }
+
+  .progress-wrap { margin-bottom: 25px; }
+  .progress-text { display: flex; justify-content: space-between; font-size: 13px; color: #66705f; margin-bottom: 8px; }
+  .progress {
+    height: 8px; background: #e7ece3; border-radius: 99px; overflow: hidden;
+  }
+  .bar { height: 100%; width: 0; background: #82a963; transition: width .25s ease; }
+
+  .question-card {
+    border: 1px solid #dce5d7;
+    border-radius: 18px;
+    padding: 22px 18px 18px;
+    box-shadow: 0 5px 20px rgba(49, 72, 40, .06);
+  }
+  .q-number {
+    display: inline-block;
+    background: #e8f2df;
+    color: #5d7f45;
+    border-radius: 99px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .question {
+    font-size: 18px;
+    line-height: 1.6;
+    font-weight: 800;
+    margin: 0 0 20px;
+  }
+  .options { display: grid; gap: 9px; }
+  .option {
+    position: relative;
+  }
+  .option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .option label {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border: 1px solid #d7dfd3;
+    border-radius: 11px;
+    padding: 12px 13px;
+    margin: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: .15s;
+    background: white;
+  }
+  .option label::before {
+    content: "";
+    width: 19px; height: 19px;
+    border: 2px solid #bcc7b7;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+  .option input:checked + label {
+    border-color: #7da45e;
+    background: #f0f6eb;
+    color: #4e7039;
+    font-weight: 800;
+  }
+  .option input:checked + label::before {
+    border: 6px solid #7da45e;
+  }
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .result-title { text-align: center; font-size: 24px; margin: 5px 0 7px; }
+  .result-name { text-align: center; color: #697465; margin-bottom: 22px; }
+  .scores { display: grid; gap: 12px; }
+  .score-card {
+    border: 1px solid #dce5d7;
+    border-radius: 15px;
+    padding: 16px;
+    background: #fbfcfa;
+  }
+  .score-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+  .score-name { font-weight: 800; }
+  .score-value { font-size: 22px; font-weight: 900; color: #66894c; }
+  .meter { height: 9px; background: #e7ece3; border-radius: 99px; overflow: hidden; }
+  .meter > div { height: 100%; background: #86a96a; border-radius: 99px; }
+  .score-desc { font-size: 12px; color: #747d70; margin-top: 8px; }
+
+  .notice {
+    margin-top: 18px;
+    padding: 14px;
+    background: #f7faf5;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #5c6657;
+  }
+  .hidden { display: none !important; }
+  footer {
+    text-align: center;
+    color: #98a193;
+    font-size: 11px;
+    padding: 18px 22px 25px;
+  }
+  @media (max-width: 420px) {
+    .content { padding: 17px; }
+    .question { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1 class="title">간편 애착유형 자가진단</h1>
+    <p class="subtitle">문항을 하나씩 읽고, 나에게 가장 가까운 정도를 선택해 보세요.</p>
+  </header>
+
+  <main class="content">
+    <section id="startScreen">
+      <div class="name-box">
+        <label for="name">이름 (선택)</label>
+        <input id="name" type="text" placeholder="이름을 입력해 주세요">
+      </div>
+      <div class="intro">
+        <strong>검사 방법</strong><br>
+        각 문항을 읽고 나에게 얼마나 해당하는지 <b>1~5점</b> 중 하나를 선택합니다.<br>
+        모든 문항을 마치면 안정형·불안형·회피형 점수를 확인할 수 있습니다.
+      </div>
+      <button class="btn primary" onclick="startTest()">진단 시작하기</button>
+    </section>
+
+    <section id="testScreen" class="hidden">
+      <div class="progress-wrap">
+        <div class="progress-text">
+          <span id="progressText">1 / 12</span>
+          <span id="progressPercent">8%</span>
+        </div>
+        <div class="progress"><div class="bar" id="progressBar"></div></div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number" id="qNumber">문항 1</div>
+        <p class="question" id="questionText"></p>
+        <div class="options" id="options"></div>
+        <div class="nav">
+          <button class="btn secondary" id="prevBtn" onclick="prevQuestion()">이전</button>
+          <button class="btn primary" id="nextBtn" onclick="nextQuestion()">다음</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="hidden">
+      <h2 class="result-title">진단 결과</h2>
+      <div class="result-name" id="resultName"></div>
+      <div class="scores" id="scores"></div>
+      <div class="notice">
+        ※ 이 결과는 자기이해를 돕기 위한 간편 자가진단 결과입니다.
+        애착유형을 확정적으로 판단하거나 전문적인 심리평가를 대신하는 검사는 아닙니다.
+      </div>
+      <div style="margin-top:18px; display:grid; gap:10px;">
+        <button class="btn primary" onclick="restartTest()">다시 검사하기</button>
+        <button class="btn secondary" onclick="window.print()">결과 인쇄하기</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>학습 활동용 간편 애착유형 자가진단</footer>
+</div>
+
+<script>
+const questions = [
+  "나는 가까운 친구나 가족을 믿고 의지할 수 있다.",
+  "나는 중요한 사람에게 거절당할까 봐 걱정된다.",
+  "나는 다른 사람과 너무 가까워지는 것이 불편하다.",
+  "힘든 일이 있을 때 믿을 만한 사람에게 도움을 요청한다.",
+  "친구가 연락이 늦으면 나를 싫어하게 된 것은 아닐까 걱정한다.",
+  "나는 혼자 해결하는 것이 편하며 도움받는 것을 좋아하지 않는다.",
+  "나는 사람들과 친밀한 관계를 맺는 것이 편안하다.",
+  "나는 친구나 연인이 나를 떠날까 봐 불안할 때가 많다.",
+  "나는 다른 사람에게 속마음을 잘 털어놓지 않는다.",
+  "나는 친한 사람과 함께 있을 때 안정감을 느낀다.",
+  "나는 상대방이 나를 얼마나 좋아하는지 자주 확인하고 싶다.",
+  "나는 누군가와 지나치게 가까워지는 것을 피하려고 한다."
+];
+
+const types = {
+  "안정형": [0, 3, 6, 9],
+  "불안형": [1, 4, 7, 10],
+  "회피형": [2, 5, 8, 11]
+};
+
+const optionTexts = [
+  "전혀 그렇지 않다 · 1점",
+  "그렇지 않은 편이다 · 2점",
+  "보통이다 · 3점",
+  "그런 편이다 · 4점",
+  "매우 그렇다 · 5점"
+];
+
+let current = 0;
+let answers = Array(questions.length).fill(null);
+
+function startTest() {
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("testScreen").classList.remove("hidden");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = current;
+  document.getElementById("qNumber").textContent = `문항 ${q + 1}`;
+  document.getElementById("questionText").textContent = `${q + 1}. ${questions[q]}`;
+
+  const options = document.getElementById("options");
+  options.innerHTML = "";
+  optionTexts.forEach((text, i) => {
+    const id = `option-${q}-${i}`;
+    const div = document.createElement("div");
+    div.className = "option";
+    div.innerHTML = `
+      <input type="radio" id="${id}" name="answer" value="${i + 1}" ${answers[q] === i + 1 ? "checked" : ""}>
+      <label for="${id}">${text}</label>
+    `;
+    options.appendChild(div);
+  });
+
+  const percent = Math.round(((q + 1) / questions.length) * 100);
+  document.getElementById("progressText").textContent = `${q + 1} / ${questions.length}`;
+  document.getElementById("progressPercent").textContent = `${percent}%`;
+  document.getElementById("progressBar").style.width = `${percent}%`;
+
+  document.getElementById("prevBtn").style.visibility = q === 0 ? "hidden" : "visible";
+  document.getElementById("nextBtn").textContent = q === questions.length - 1 ? "결과 보기" : "다음";
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function saveCurrentAnswer() {
+  const selected = document.querySelector('input[name="answer"]:checked');
+  if (!selected) {
+    alert("해당 문항에 대한 답을 하나 선택해 주세요.");
+    return false;
+  }
+  answers[current] = Number(selected.value);
+  return true;
+}
+
+function nextQuestion() {
+  if (!saveCurrentAnswer()) return;
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) {
+    const selected = document.querySelector('input[name="answer"]:checked');
+    if (selected) answers[current] = Number(selected.value);
+    current--;
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  const resultScreen = document.getElementById("resultScreen");
+  document.getElementById("testScreen").classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+
+  const name = document.getElementById("name").value.trim();
+  document.getElementById("resultName").textContent = name ? `${name}님의 결과입니다.` : "나의 검사 결과입니다.";
+
+  const scores = document.getElementById("scores");
+  scores.innerHTML = "";
+
+  Object.entries(types).forEach(([type, indexes]) => {
+    const score = indexes.reduce((sum, idx) => sum + answers[idx], 0);
+    const percent = (score / 20) * 100;
+
+    const card = document.createElement("div");
+    card.className = "score-card";
+    card.innerHTML = `
+      <div class="score-head">
+        <span class="score-name">${type}</span>
+        <span class="score-value">${score}점 / 20점</span>
+      </div>
+      <div class="meter"><div style="width:${percent}%"></div></div>
+      <div class="score-desc">해당 유형의 4개 문항 점수를 합산한 결과입니다.</div>
+    `;
+    scores.appendChild(card);
+  });
+
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function restartTest() {
+  current = 0;
+  answers = Array(questions.length).fill(null);
+  document.getElementById("resultScreen").classList.add("hidden");
+  document.getElementById("testScreen").classList.remove("hidden");
+  renderQuestion();
+}
+</script>
+</body>
+</html>
